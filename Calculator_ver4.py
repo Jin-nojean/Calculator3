@@ -738,9 +738,9 @@ elif menu == "FuelEU Maritime":
 
 
 # 나머지 메뉴
-elif menu == "CII (준비 중)":
-    st.title("⚓ CII 계산기 (준비 중)")
-elif menu == "EU ETS (준비 중)":
-    st.title("💶 EU ETS 계산기 (준비 중)")
+#elif menu == "CII (준비 중)":
+    #st.title("⚓ CII 계산기 (준비 중)")
+#elif menu == "EU ETS (준비 중)":
+    #st.title("💶 EU ETS 계산기 (준비 중)")
 
 
