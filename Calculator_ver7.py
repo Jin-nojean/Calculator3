@@ -1207,3 +1207,10 @@ elif menu == "FuelEU Maritime":
 
         df_grouped = pd.DataFrame(grouped_compliance)
         st.dataframe(df_grouped, use_container_width=True, hide_index=True)
+
+st.markdown(
+    "<div style='text-align: left; font-size: 12px; color: gray; margin-top: 30px;'>"
+    "© 2025 Hyundai Glovis E2E Integrated Strategy Team | jhkim36@glovis.net | 02-6393-9592"
+    "</div>",
+    unsafe_allow_html=True
+)
