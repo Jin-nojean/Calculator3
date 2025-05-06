@@ -1057,8 +1057,8 @@ elif menu == "FuelEU Maritime":
 
             if vlsfo_total_in is not None:
                 pooling_revenue = round(58.605719596 * vlsfo_total_in, 4)
-                st.write(f"**VLSFO 풀링 가능량 (Δ1+Δ2 기준):** {vlsfo_total_in:,.4f} 톤")
-                st.write(f"**풀링으로 인한 수익 가능성:** € {pooling_revenue:,.4f}")
+                st.write(f"**VLSFO 풀링 가능량 (역내 기준):** {vlsfo_total_in:,.4f} 톤")
+                st.write(f"**발생 Surplus 가치:** € {pooling_revenue:,.4f}")
 
     # 🌿 Surplus 상태 - 화석연료 풀링 가능량 계산 (Δ1 + Δ2)
         if result["avg_ghg_intensity"] < result["standard_now"]:
