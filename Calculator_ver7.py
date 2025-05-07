@@ -146,7 +146,7 @@ def calculate_fueleu_result(fuel_data: list[dict],fuel_defaults: dict) -> dict:
     }
 
     if avg_ghg_intensity > standard_now:
-        penalty_eur = round((avg_ghg_intensity - standard_now) * total_energy * 2400 / 41000 / avg_ghg_intensity, 4)
+        penalty_eur = round((avg_ghg_intensity - standard_now) * total_energy * 2400 / 41000 / avg_ghg_intensity, 0)
     else:
         penalty_eur = 0
 
@@ -154,9 +154,9 @@ def calculate_fueleu_result(fuel_data: list[dict],fuel_defaults: dict) -> dict:
     df_result.loc["합계"] = {
         "No.": "-",
         "연료종류": "Total",
-        "GHG Intensity (gCO₂eq/MJ)": f"{avg_ghg_intensity:,.4f}",
-        "반영 LCV (MJ)": f"{total_energy:,.4f}",
-        "배출량 (tCO₂eq)": f"{total_emission:,.4f}"
+        "GHG Intensity (gCO₂eq/MJ)": f"{avg_ghg_intensity:,.2f}",
+        "반영 LCV (MJ)": f"{total_energy:,.2f}",
+        "배출량 (tCO₂eq)": f"{total_emission:,.2f}"
     }
 
     return {
@@ -583,7 +583,7 @@ def calculate_lng_total_required_stepwise(sorted_fuels, result, fuel_defaults):
     return round(lng_total, 4)
 
 # 🌱 GFI 계산기
-if menu == "GFI 계산기":
+if menu == "GFI 계산기(IMO 중기조치)":
     st.title("🌱 GFI 계산기")
 
     if "fuel_data" not in st.session_state:
@@ -756,30 +756,30 @@ if menu == "GFI 계산기":
                     row["Tier"] = "Tier 2"
                     cb1 = round(round(bg - dg, 4) * round(total_energy, 4) / 1e6, 4)
                     cb2 = round(round(gfi - bg, 4) * round(total_energy, 4) / 1e6, 4)
-                    p1 = round(cb1 * 100, 4)
-                    p2 = round(cb2 * 380, 4)
+                    p1 = round(cb1 * 100, 0)
+                    p2 = round(cb2 * 380, 0)
                     total_penalty = p1 + p2
-                    row["Tier 1 CB (tCO₂eq)"] = f"{cb1:,.4f} tCO₂eq"
-                    row["Tier 2 CB (tCO₂eq)"] = f"{cb2:,.4f} tCO₂eq"
-                    row["Tier 1 Penalty ($)"] = f"${p1:,.4f}"
-                    row["Tier 2 Penalty ($)"] = f"${p2:,.4f}"
+                    row["Tier 1 CB (tCO₂eq)"] = f"{cb1:,.2f} tCO₂eq"
+                    row["Tier 2 CB (tCO₂eq)"] = f"{cb2:,.2f} tCO₂eq"
+                    row["Tier 1 Penalty ($)"] = f"${p1:,.0f}"
+                    row["Tier 2 Penalty ($)"] = f"${p2:,.0f}"
 
                 elif gfi > dg:
                     row["Tier"] = "Tier 1"
                     cb1 = round(round(gfi - dg, 4) * round(total_energy, 4) / 1e6, 4)
                     p1 = round(cb1 * 100, 4)
                     total_penalty = p1
-                    row["Tier 1 CB (tCO₂eq)"] = f"{cb1:,.4f} tCO₂eq"
-                    row["Tier 1 Penalty ($)"] = f"${p1:,.4f}"
+                    row["Tier 1 CB (tCO₂eq)"] = f"{cb1:,.0f} tCO₂eq"
+                    row["Tier 1 Penalty ($)"] = f"${p1:,.0f}"
 
                 else:
                     row["Tier"] = "Surplus"
                     surplus = round(round(dg - gfi, 4) * round(total_energy, 4) / 1e6, 4)
-                    row["Surplus (tCO₂eq)"] = f"{surplus:,.4f} tCO₂eq"
+                    row["Surplus (tCO₂eq)"] = f"{surplus:,.2f} tCO₂eq"
                     surplus_data.append({"연도": y, "Surplus (tCO₂eq)": f"{surplus:,.2f} tCO₂eq"})
 
                 if row["Tier"] != "Surplus":
-                    row["Total Penalty ($)"] = f"${total_penalty:,.1f}"
+                    row["Total Penalty ($)"] = f"${total_penalty:,.0f}"
                 else:
                     row["Total Penalty ($)"] = "None"
 
@@ -801,7 +801,7 @@ if menu == "GFI 계산기":
                 st.subheader("🟢 Surplus 발생 연도")
                 st.dataframe(pd.DataFrame(surplus_data), use_container_width=True, hide_index=True)
 
-                st.subheader("🔄 Surplus로 상쇄 가능한 연료 사용량 (톤)")
+                st.subheader("🔄 Surplus로 Tier2 탄소세 상쇄 가능한 연료 사용량 (톤)")
 
                 fuel_gfi_lhv = {
         "VLSFO": {"GFI": 91.60123, "LHV": 40500},
@@ -1044,21 +1044,21 @@ elif menu == "FuelEU Maritime":
         df_result = result["df_result"]
         st.dataframe(df_result, use_container_width=True, hide_index=True)
 
-        st.write(f"**평균 GHG Intensity:** {result['avg_ghg_intensity']:,.4f} gCO₂eq/MJ")
-        st.write(f"**기준 GHG Intensity (2025):** {result['standard_now']:,.4f} gCO₂eq/MJ")
-        st.write(f"**Compliance Balance (CB):** {result['cb']:,.4f} tCO₂eq")
+        st.write(f"**평균 GHG Intensity:** {result['avg_ghg_intensity']:,.2f} gCO₂eq/MJ")
+        st.write(f"**기준 GHG Intensity (2025):** {result['standard_now']:,.2f} gCO₂eq/MJ")
+        st.write(f"**Compliance Balance (CB):** {result['cb']:,.2f} tCO₂eq")
         #st.write(f"**예상 벌금:** € {result['penalty_eur']:,.3f}")
         # Surplus vs Deficit 분기
         if result["avg_ghg_intensity"] > result["standard_now"]:
             # Deficit → 벌금 표시
-            st.write(f"**예상 벌금:** € {result['penalty_eur']:,.4f}")
+            st.write(f"**예상 벌금:** € {result['penalty_eur']:,.0f}")
         else:
             st.write("**예상 벌금:** 없음 (Surplus 상태)")
 
             if vlsfo_total_in is not None:
-                pooling_revenue = round(58.605719596 * vlsfo_total_in, 4)
-                st.write(f"**VLSFO 풀링 가능량 (역내 기준):** {vlsfo_total_in:,.4f} 톤")
-                st.write(f"**발생 Surplus 가치:** € {pooling_revenue:,.4f}")
+                pooling_revenue = round(58.605719596 * vlsfo_total_in, 0)
+                st.write(f"**VLSFO 풀링 가능량 (역내 기준):** {vlsfo_total_in:,.2f} 톤")
+                st.write(f"**발생 Surplus 가치:** € {pooling_revenue:,.0f}")
 
     # 🌿 Surplus 상태 - 화석연료 풀링 가능량 계산 (Δ1 + Δ2)
         if result["avg_ghg_intensity"] < result["standard_now"]:
