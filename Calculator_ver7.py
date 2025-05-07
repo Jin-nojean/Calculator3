@@ -8,7 +8,7 @@ from collections import defaultdict
 st.set_page_config(page_title="GFI & FuelEU 계산기", layout="centered")
 
 # 메뉴
-menu = st.sidebar.radio("계산 항목 선택", ["GFI 계산기", "FuelEU Maritime"])
+menu = st.sidebar.radio("계산 항목 선택", ["GFI 계산기(IMO 중기조치)", "FuelEU Maritime"])
 #menu = st.sidebar.radio("계산 항목 선택", ["GFI 계산기", "FuelEU Maritime", "CII (준비 중)", "EU ETS (준비 중)"])
 
 # 연료 기본값 (GFI 계산기와 FuelEU 계산기 공통)
