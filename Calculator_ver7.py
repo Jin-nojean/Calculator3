@@ -880,7 +880,7 @@ if menu == "GFI 계산기(IMO 중기조치)":
                     # Tier 2 계산
                     if gfi > bg:
                         cb2 = (gfi - bg) * total_energy / 1e6  # Tier2 CB (tCO₂eq)
-                        cb1 = (bg - dg) * total_energy / 1e6   # Tier1 CB (tCO₂eq)
+                        cb1 = (gfi - dg) * total_energy / 1e6   # Tier1 CB (tCO₂eq)
 
                         data_tier2["연도"].append(year)
                         data_tier1["연도"].append(year)
