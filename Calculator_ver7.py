@@ -1022,11 +1022,11 @@ elif menu == "FuelEU Maritime":
             st.session_state["fueleu_calculated"] = False
             st.rerun()
 
-        if st.button("🧹 모든 연료 삭제"):
-            st.session_state["fueleu_data"] = []
-            st.session_state["fueleu_edit_index"] = None
-            st.session_state["fueleu_calculated"] = False
-            st.rerun()
+    if st.button("🧹 모든 연료 삭제"):
+        st.session_state["fueleu_data"] = []
+        st.session_state["fueleu_edit_index"] = None
+        st.session_state["fueleu_calculated"] = False
+        st.rerun()
             
     if st.button("FuelEU 계산하기"):
         if st.session_state["fueleu_data"]:
