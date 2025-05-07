@@ -1048,7 +1048,7 @@ elif menu == "FuelEU Maritime":
             for index in sorted(delete_indices, reverse=True):
                 st.session_state["fueleu_data"].pop(index)
             st.session_state["fueleu_edit_index"] = None
-            st.session_state["fueleu_calculated"] = False
+            #st.session_state["fueleu_calculated"] = False
             st.rerun()
     col1, col2, col3, col4 = st.columns([1,4,4,1])
     
