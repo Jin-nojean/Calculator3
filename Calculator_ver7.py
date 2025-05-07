@@ -695,6 +695,12 @@ if menu == "GFI 계산기(IMO 중기조치)":
             st.session_state["edit_index"] = None
             st.rerun()
 
+    if st.button("🧹 모든 연료 삭제"):
+        st.session_state["fuel_data"] = []
+        st.session_state["edit_index"] = None
+        st.session_state["gfi_calculated"] = False
+        st.rerun()
+
     # GFI 계산 버튼
     if st.button("GFI 계산하기"):
         if st.session_state.fuel_data:
@@ -1015,6 +1021,12 @@ elif menu == "FuelEU Maritime":
             st.session_state["fueleu_edit_index"] = None
             st.session_state["fueleu_calculated"] = False
             st.rerun()
+
+        if st.button("🧹 모든 연료 삭제"):
+            st.session_state["fueleu_data"] = []
+            st.session_state["fueleu_edit_index"] = None
+            st.session_state["fueleu_calculated"] = False
+            st.rerun()
             
     if st.button("FuelEU 계산하기"):
         if st.session_state["fueleu_data"]:
@@ -1202,7 +1214,7 @@ elif menu == "FuelEU Maritime":
                 "기준 GHG Intensity": std_value,
                 "Tier": tier,
                 "CB (tCO₂eq)": round(cb, 3),
-                "Penalty (€)": f"{penalty:,.1f}" if penalty else "-"
+                "Penalty (€)": f"€{penalty:,.0f}" if penalty else "-"
             })
 
         df_grouped = pd.DataFrame(grouped_compliance)
