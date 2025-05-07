@@ -613,7 +613,7 @@ if menu == "GFI 계산기(IMO 중기조치)":
                     "WtW": wtw,
                     "사용량": amount
                 }
-                st.session_state["gfi_calculated"] = False
+                st.session_state["gfi_calculated"] = True
                 st.session_state["edit_index"] = None
                 st.rerun()
 
@@ -970,7 +970,7 @@ elif menu == "FuelEU Maritime":
                     "역외": outside
                 }
                 st.session_state["fueleu_edit_index"] = None
-                st.session_state["fueleu_calculated"] = False
+                st.session_state["fueleu_calculated"] = True
                 st.rerun()
     else:
         with st.form("fueleu_add_form"):
