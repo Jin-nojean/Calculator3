@@ -582,9 +582,9 @@ def calculate_lng_total_required_stepwise(sorted_fuels, result, fuel_defaults):
 
     return round(lng_total, 4)
 
-# 🌱 GFI 계산기
+# 🌱 GFI 계산기(IMO 중기조치)
 if menu == "GFI 계산기(IMO 중기조치)":
-    st.title("🌱 GFI 계산기")
+    st.title("🌱 GFI 계산기(IMO 중기조치)")
 
     if "fuel_data" not in st.session_state:
         st.session_state["fuel_data"] = []
