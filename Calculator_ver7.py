@@ -1366,6 +1366,7 @@ elif menu == "FuelEU Maritime":
 st.markdown(
     "<div style='text-align: left; font-size: 12px; color: gray; margin-top: 30px;'>"
     "© 2025 Hyundai Glovis E2E Integrated Strategy Team | jhkim36@glovis.net | 02-6393-9592"
+    "<i>※ 본 계산기는 현대글로비스 사내용으로 제작되었으며, 무단 복제·배포를 금합니다.</i>"
     "</div>",
     unsafe_allow_html=True
 )
