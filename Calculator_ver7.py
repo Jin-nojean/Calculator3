@@ -729,6 +729,19 @@ if menu == "GFI 계산기(IMO 중기조치)":
             base_now = 93.3 * (1 - 0.04)
             direct_now = 93.3 * (1 - 0.17)  # 17% 감축 기준
 
+            # 표 구성용 데이터프레임 생성
+            df_gfi_summary = pd.DataFrame([{
+                "No.": 1,
+                "연료종류": "총합",
+                "GFI (gCO₂eq/MJ)": round(gfi, 4),
+                "총 에너지 (MJ)": round(total_energy, 2),
+                "총 배출량 (tCO₂eq)": round(total_emission, 2)
+            }])
+
+            st.subheader("📄 GFI 계산 결과")
+            st.dataframe(df_gfi_summary, use_container_width=True, hide_index=True)
+            
+
             # Tier 구분 및 CB, Penalty 계산
             if gfi >= base_now:
                 tier = "Tier 2"
