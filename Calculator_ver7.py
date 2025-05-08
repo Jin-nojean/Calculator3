@@ -732,7 +732,7 @@ if menu == "GFI 계산기(IMO 중기조치)":
             # 연료별 GFI 계산을 위한 열 추가
             df["GHG Intensity (gCO₂eq/MJ)"] = df["WtW"]
             df["총 에너지 (MJ)"] = df["LHV"] * df["사용량"]
-            df["총 배출량 (tCO₂eq)"] = df["LHV"] * df["WtW"] * df["사용량"] * 1e-3
+            df["총 배출량 (tCO₂eq)"] = df["LHV"] * df["WtW"] * df["사용량"] * 1e-6
 
             df_table = df[["연료종류", "GHG Intensity (gCO₂eq/MJ)", "총 에너지 (MJ)", "총 배출량 (tCO₂eq)"]].copy()
             df_table.insert(0, "No.", range(1, len(df_table) + 1))
