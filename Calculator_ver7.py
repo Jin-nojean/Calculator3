@@ -773,8 +773,8 @@ if menu == "GFI 계산기(IMO 중기조치)":
                     total_penalty = p1 + p2
                     row["Tier 1 CB (tCO₂eq)"] = f"{cb1:,.2f} tCO₂eq"
                     row["Tier 2 CB (tCO₂eq)"] = f"{cb2:,.2f} tCO₂eq"
-                    row["Tier 1 Penalty ($)"] = f"${p1:,.0f}"
-                    row["Tier 2 Penalty ($)"] = f"${p2:,.0f}"
+                    row["Tier 1 탄소세 ($)"] = f"${p1:,.0f}"
+                    row["Tier 2 탄소세 ($)"] = f"${p2:,.0f}"
 
                 elif gfi > dg:
                     row["Tier"] = "Tier 1"
@@ -782,7 +782,7 @@ if menu == "GFI 계산기(IMO 중기조치)":
                     p1 = round(cb1 * 100, 4)
                     total_penalty = p1
                     row["Tier 1 CB (tCO₂eq)"] = f"{cb1:,.0f} tCO₂eq"
-                    row["Tier 1 Penalty ($)"] = f"${p1:,.0f}"
+                    row["Tier 1 탄소세 ($)"] = f"${p1:,.0f}"
 
                 else:
                     row["Tier"] = "Surplus"
@@ -791,9 +791,9 @@ if menu == "GFI 계산기(IMO 중기조치)":
                     surplus_data.append({"연도": y, "Surplus (tCO₂eq)": f"{surplus:,.2f} tCO₂eq"})
 
                 if row["Tier"] != "Surplus":
-                    row["Total Penalty ($)"] = f"${total_penalty:,.0f}"
+                    row["총 탄소세 ($)"] = f"${total_penalty:,.0f}"
                 else:
-                    row["Total Penalty ($)"] = "None"
+                    row["총 탄소세 ($)"] = "None"
 
                 data.append(row)
 
@@ -858,7 +858,7 @@ if menu == "GFI 계산기(IMO 중기조치)":
             # ✅ Tier 2 상쇄용 친환경 연료 사용량 계산 (연도별)
             if gfi > min(direct_gfi):  # GFI가 최소 Direct GFI보다 클 때만 계산
 
-                st.subheader("🌿 Penalty 상쇄를 위한 친환경 연료 사용량 (톤)")
+                st.subheader("🌿 탄소세 상쇄를 위한 각 유종별 연료량 (톤)")
 
                 green_fuels = {
                     "LNG":  {"GFI": 76.12916, "LHV": 49100},
@@ -917,10 +917,10 @@ if menu == "GFI 계산기(IMO 중기조치)":
                         if col != "연도":
                             df[col] = df[col].apply(lambda x: f"{x:,.2f}")
 
-                st.write("✅ Tier 2 벌금 상쇄에 필요한 연료량 (톤)")
+                st.write("✅ Tier 2 탄소세 상쇄에 필요한 각 유종별 연료량 (톤)")
                 st.dataframe(df_t2_formatted, use_container_width=True, hide_index=True)
 
-                st.write("✅ Tier 1 벌금 상쇄에 필요한 연료량 (톤)")
+                st.write("✅ Tier 1 탄소세 상쇄에 필요한 각 유종별 연료량 (톤)")
                 st.dataframe(df_t1_formatted, use_container_width=True, hide_index=True)
 
 
@@ -1099,9 +1099,9 @@ elif menu == "FuelEU Maritime":
         # Surplus vs Deficit 분기
         if result["avg_ghg_intensity"] > result["standard_now"]:
             # Deficit → 벌금 표시
-            st.write(f"**예상 벌금:** € {result['penalty_eur']:,.0f}")
+            st.write(f"**예상 탄소세:** € {result['penalty_eur']:,.0f}")
         else:
-            st.write("**예상 벌금:** 없음 (Surplus 상태)")
+            st.write("**예상 탄소세:** 없음 (Surplus 상태)")
 
             if vlsfo_total_in is not None:
                 pooling_revenue = round(58.605719596 * vlsfo_total_in, 0)
@@ -1110,7 +1110,7 @@ elif menu == "FuelEU Maritime":
 
     # 🌿 Surplus 상태 - 화석연료 풀링 가능량 계산 (Δ1 + Δ2)
         if result["avg_ghg_intensity"] < result["standard_now"]:
-            st.info("📊 Surplus 상태입니다. Pooling 가능한 화석연료(VLSFO, HSFO, LSMGO) 톤수를 계산합니다.")
+            st.info("📊 Surplus 상태입니다. Pooling 가능한 각 유종별 연료량을 계산합니다.")
 
             pooling_candidates = {
             "VLSFO": {"LHV": 40500, "GFI": 91.60123},
@@ -1136,7 +1136,7 @@ elif menu == "FuelEU Maritime":
                 pooling_table["역내 톤수"].append(total_in)
                 pooling_table["역외 톤수"].append(total_out)
 
-            st.subheader("🛢️ Pooling 가능한 화석연료")
+            st.subheader("🛢️ Pooling 가능한 각 유종별 연료량")
             df_pooling = pd.DataFrame(pooling_table)
 
             # 👉 쉼표 및 소수점 둘째자리 포맷 적용
@@ -1146,8 +1146,8 @@ elif menu == "FuelEU Maritime":
             
             # 🔺 Deficit 상태 - 친환경 연료 필요량 
         elif result["avg_ghg_intensity"] > result["standard_now"]:
-                st.info("📊 Deficit 상태입니다. Penalty를 '0'로 만들기 위한 친환경 연료 톤수를 계산합니다.")
-                st.subheader("🌱 필요한 친환경 연료 (Penalty = 0 기준)")
+                st.info("📊 Deficit 상태입니다. 탄소세를 '0'로 만들기 위한 친환경 연료량을 계산합니다.")
+                st.subheader("🌱 탄소세 상쇄를 위해 필요한 각 유종별 연료량")
 
                 green_table = {
                     "연료": [],
@@ -1259,7 +1259,7 @@ elif menu == "FuelEU Maritime":
                 "기준 GHG Intensity": std_value,
                 "Tier": tier,
                 "CB (tCO₂eq)": round(cb, 3),
-                "Penalty (€)": f"€{penalty:,.0f}" if penalty else "-"
+                "탄소세 (€)": f"€{penalty:,.0f}" if penalty else "-"
             })
 
         df_grouped = pd.DataFrame(grouped_compliance)
