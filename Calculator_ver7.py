@@ -887,7 +887,7 @@ if menu == "GFI 계산기(IMO 중기조치)":
             
             #텍스트 표기
             for i, row in df_penalty.iterrows():
-                offset = max(df_penalty["총 탄소세 ($)"]) * 0.04  # 4% 여유
+                offset = max(df_penalty["총 탄소세 ($)"]) * 0.07  # 7% 여유
                 plt.text(x[i], row["총 탄소세 ($)"] + offset, f"${int(row['총 탄소세 ($)']):,}", ha='center', va='bottom', fontsize=8, color="red")
          
             # y축 최대값 조정
@@ -907,7 +907,7 @@ if menu == "GFI 계산기(IMO 중기조치)":
                 #st.subheader("🟢 Surplus 발생 연도")
                 #st.dataframe(pd.DataFrame(surplus_data), use_container_width=True, hide_index=True)
 
-                st.subheader("🔄 Surplus로 Tier2 탄소세 상쇄 가능한 연료 사용량 (톤)")
+                st.subheader("🔄 Surplus로 Tier2 탄소세 상쇄 가능한 각 유종별 연료량 (톤)")
 
                 fuel_gfi_lhv = {
         "VLSFO": {"GFI": 91.60123, "LHV": 40500},
