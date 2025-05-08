@@ -722,7 +722,7 @@ if menu == "GFI 계산기(IMO 중기조치)":
             df["총에너지(MJ)"] = df["LHV"] * df["사용량"]
             total_emission = df["총배출량(tCO2eq)"].sum()
             total_energy = df["총에너지(MJ)"].sum()
-            gfi = (total_emission * 1000) / total_energy
+            gfi = total_emission/ total_energy
             st.success(f"계산된 GFI: **{gfi:.2f} gCO₂eq/MJ**")
             
             # 기준값 설정 (2028년 기준 예시)
