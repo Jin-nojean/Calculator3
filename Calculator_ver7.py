@@ -799,9 +799,9 @@ if menu == "GFI 계산기(IMO 중기조치)":
 
             # ✅ 열 순서 지정
             columns_order = ["No.", "연도", "Tier",
-                 "Tier 1 CB (tCO₂eq)", "Tier 1 Penalty ($)",
-                 "Tier 2 CB (tCO₂eq)", "Tier 2 Penalty ($)",
-                 "Surplus (tCO₂eq)", "Total Penalty ($)"]
+                 "Tier 1 CB (tCO₂eq)", "Tier 1 탄소세 ($)",
+                 "Tier 2 CB (tCO₂eq)", "Tier 2 탄소세 ($)",
+                 "Surplus (tCO₂eq)", "총 탄소세 ($)"]
 
             df_result = pd.DataFrame(data)
             df_result = df_result.reindex(columns=[col for col in columns_order if col in df_result.columns])
