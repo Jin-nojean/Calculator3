@@ -865,6 +865,35 @@ if menu == "GFI 계산기(IMO 중기조치)":
             st.subheader("📘 연도별 Compliance 결과")
             st.dataframe(df_result, use_container_width=True, hide_index=True)
 
+# 연도별 탄소세 시각화 준비
+            df_penalty = df_result.copy()
+            df_penalty["연도"] = df_penalty["연도"].astype(int)
+
+            # 문자열 $ 제거 후 숫자로 변환
+            for col in ["Tier 1 Penalty ($)", "Tier 2 Penalty ($)", "Total Penalty ($)"]:
+                if col in df_penalty.columns:
+                    df_penalty[col] = df_penalty[col].replace("[$,]", "", regex=True).replace("None", "0").astype(float)
+
+            # 그래프
+            plt.figure(figsize=(10, 4))
+            bar_width = 0.4
+            x = np.arange(len(df_penalty))
+
+            plt.bar(x - bar_width/2, df_penalty["Tier 1 Penalty ($)"], width=bar_width, label="Tier 1 Penalty", color="skyblue")
+            if "Tier 2 Penalty ($)" in df_penalty.columns:
+                plt.bar(x + bar_width/2, df_penalty["Tier 2 Penalty ($)"], width=bar_width, label="Tier 2 Penalty", color="orange")
+
+            plt.plot(x, df_penalty["Total Penalty ($)"], label="Total Penalty", color="red", marker="o", linewidth=2)
+
+            plt.xticks(x, df_penalty["연도"])
+            plt.xlabel("연도")
+            plt.ylabel("탄소세 ($)")
+            plt.title("연도별 탄소세 (GFI 기준)")
+            plt.legend()
+            plt.grid(True, linestyle="--", alpha=0.3)
+
+            st.pyplot(plt)
+
             if surplus_data:
                 #st.subheader("🟢 Surplus 발생 연도")
                 #st.dataframe(pd.DataFrame(surplus_data), use_container_width=True, hide_index=True)
