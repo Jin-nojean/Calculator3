@@ -729,17 +729,30 @@ if menu == "GFI 계산기(IMO 중기조치)":
             base_now = 93.3 * (1 - 0.04)
             direct_now = 93.3 * (1 - 0.17)  # 17% 감축 기준
 
-            # 표 구성용 데이터프레임 생성
-            df_gfi_summary = pd.DataFrame([{
-                "No.": 1,
-                "연료종류": "총합",
-                "GFI (gCO₂eq/MJ)": round(gfi, 4),
-                "총 에너지 (MJ)": round(total_energy, 2),
-                "총 배출량 (tCO₂eq)": round(total_emission, 2)
+            # 연료별 GFI 계산을 위한 열 추가
+            df["GHG Intensity (gCO₂eq/MJ)"] = df["WtW"]
+            df["총 에너지 (MJ)"] = df["LHV"] * df["사용량"]
+            df["총 배출량 (tCO₂eq)"] = df["LHV"] * df["WtW"] * df["사용량"] * 1e-3
+
+            df_table = df[["연료종류", "GHG Intensity (gCO₂eq/MJ)", "총 에너지 (MJ)", "총 배출량 (tCO₂eq)"]].copy()
+            df_table.insert(0, "No.", range(1, len(df_table) + 1))
+
+            # 총합 행 추가
+            df_total = pd.DataFrame([{
+                "No.": "-",
+                "연료종류": "Total",
+                "GHG Intensity (gCO₂eq/MJ)": f"{gfi:.4f}",
+                "총 에너지 (MJ)": df["총 에너지 (MJ)"].sum(),
+                "총 배출량 (tCO₂eq)": df["총 배출량 (tCO₂eq)"].sum()
             }])
+            df_table = pd.concat([df_table, df_total], ignore_index=True)
+
+            # 쉼표 및 소수점 포맷 적용
+            for col in ["총 에너지 (MJ)", "총 배출량 (tCO₂eq)"]:
+                df_table[col] = df_table[col].apply(lambda x: f"{float(x):,.2f}")
 
             st.subheader("📄 GFI 계산 결과")
-            st.dataframe(df_gfi_summary, use_container_width=True, hide_index=True)
+            st.dataframe(df_table, use_container_width=True, hide_index=True)
             
 
             # Tier 구분 및 CB, Penalty 계산
