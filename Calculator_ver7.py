@@ -870,7 +870,7 @@ if menu == "GFI 계산기(IMO 중기조치)":
             df_penalty["연도"] = df_penalty["연도"].astype(int)
 
             # 문자열 $ 제거 후 숫자로 변환
-            for col in ["Tier 1 Penalty ($)", "Tier 2 Penalty ($)", "Total Penalty ($)"]:
+            for col in ["Tier 1 탄소세 ($)", "Tier 2 탄소세 ($)", "총 탄소세 ($)"]:
                 if col in df_penalty.columns:
                     df_penalty[col] = df_penalty[col].replace("[$,]", "", regex=True).replace("None", "0").astype(float)
 
@@ -879,11 +879,11 @@ if menu == "GFI 계산기(IMO 중기조치)":
             bar_width = 0.4
             x = np.arange(len(df_penalty))
 
-            plt.bar(x - bar_width/2, df_penalty["Tier 1 Penalty ($)"], width=bar_width, label="Tier 1 Penalty", color="skyblue")
+            plt.bar(x - bar_width/2, df_penalty["Tier 1 탄소세 ($)"], width=bar_width, label="Tier 1 탄소세", color="skyblue")
             if "Tier 2 Penalty ($)" in df_penalty.columns:
-                plt.bar(x + bar_width/2, df_penalty["Tier 2 Penalty ($)"], width=bar_width, label="Tier 2 Penalty", color="orange")
+                plt.bar(x + bar_width/2, df_penalty["Tier 2 탄소세 ($)"], width=bar_width, label="Tier 2 탄소세", color="orange")
 
-            plt.plot(x, df_penalty["Total Penalty ($)"], label="Total Penalty", color="red", marker="o", linewidth=2)
+            plt.plot(x, df_penalty["총 탄소세 ($)"], label="총 탄소세", color="red", marker="o", linewidth=2)
 
             plt.xticks(x, df_penalty["연도"])
             plt.xlabel("연도")
