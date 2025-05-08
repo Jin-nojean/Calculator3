@@ -866,8 +866,8 @@ if menu == "GFI 계산기(IMO 중기조치)":
             st.dataframe(df_result, use_container_width=True, hide_index=True)
 
             if surplus_data:
-                st.subheader("🟢 Surplus 발생 연도")
-                st.dataframe(pd.DataFrame(surplus_data), use_container_width=True, hide_index=True)
+                #st.subheader("🟢 Surplus 발생 연도")
+                #st.dataframe(pd.DataFrame(surplus_data), use_container_width=True, hide_index=True)
 
                 st.subheader("🔄 Surplus로 Tier2 탄소세 상쇄 가능한 연료 사용량 (톤)")
 
