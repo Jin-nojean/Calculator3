@@ -741,7 +741,7 @@ if menu == "GFI 계산기(IMO 중기조치)":
             df_total = pd.DataFrame([{
                 "No.": "-",
                 "연료종류": "Total",
-                "GHG Intensity (gCO₂eq/MJ)": f"{gfi:.4f}",
+                "GHG Intensity (gCO₂eq/MJ)": f"{gfi:.2f}",
                 "총 에너지 (MJ)": df["총 에너지 (MJ)"].sum(),
                 "총 배출량 (tCO₂eq)": df["총 배출량 (tCO₂eq)"].sum()
             }])
