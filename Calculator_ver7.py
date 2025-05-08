@@ -879,20 +879,25 @@ if menu == "GFI 계산기(IMO 중기조치)":
             bar_width = 0.4
             x = np.arange(len(df_penalty))
 
-            plt.bar(x - bar_width/2, df_penalty["Tier 1 탄소세 ($)"], width=bar_width, label="Tier 1 탄소세", color="skyblue")
+            plt.bar(x - bar_width/2, df_penalty["Tier 1 탄소세 ($)"], width=bar_width, label="Tier 1 Carbon Tax", color="skyblue")
             if "Tier 2 탄소세 ($)" in df_penalty.columns:
-                plt.bar(x + bar_width/2, df_penalty["Tier 2 탄소세 ($)"], width=bar_width, label="Tier 2 탄소세", color="orange")
+                plt.bar(x + bar_width/2, df_penalty["Tier 2 탄소세 ($)"], width=bar_width, label="Tier 2 Carbon Tax", color="orange")
 
-            plt.plot(x, df_penalty["총 탄소세 ($)"], label="총 탄소세", color="red", marker="o", linewidth=2)
+            plt.plot(x, df_penalty["총 탄소세 ($)"], label="Total Carbon Tax", color="red", marker="o", linewidth=2)
             
-            #텍스트 표기 (선택)
+            #텍스트 표기
             for i, row in df_penalty.iterrows():
-                plt.text(x[i], row["총 탄소세 ($)"] + 20000, f"${int(row['총 탄소세 ($)']):,}", ha='center', va='bottom', fontsize=8, color="red")
+                offset = max(df_penalty["총 탄소세 ($)"]) * 0.03  # 3% 여유
+                plt.text(x[i], row["총 탄소세 ($)"] + offset, f"${int(row['총 탄소세 ($)']):,}", ha='center', va='bottom', fontsize=8, color="red")
+         
+            # y축 최대값 조정
+            max_val = df_penalty[["Tier 1 탄소세 ($)", "Tier 2 탄소세 ($)", "총 탄소세 ($)"]].max().max()
+            plt.ylim(0, max_val * 1.2)
 
             plt.xticks(x, df_penalty["연도"])
-            plt.xlabel("연도")
-            plt.ylabel("탄소세 ($)")
-            plt.title("연도별 탄소세 (GFI 기준)")
+            plt.xlabel("Year")
+            plt.ylabel("Carbon Tax ($)")
+            plt.title("Annual Carbon Tax")
             plt.legend()
             plt.grid(True, linestyle="--", alpha=0.3)
 
