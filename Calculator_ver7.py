@@ -724,6 +724,36 @@ if menu == "GFI 계산기(IMO 중기조치)":
             total_energy = df["총에너지(MJ)"].sum()
             gfi = (total_emission * 1000) / total_energy
             st.success(f"계산된 GFI: **{gfi:.2f} gCO₂eq/MJ**")
+            
+            # 기준값 설정 (2028년 기준 예시)
+            base_now = 93.3 * (1 - 0.04)
+            direct_now = 93.3 * (1 - 0.17)  # 17% 감축 기준
+
+            # Tier 구분 및 CB, Penalty 계산
+            if gfi >= base_now:
+                tier = "Tier 2"
+                cb2 = (gfi - base_now) * total_energy / 1e6
+                cb1 = (base_now - direct_now) * total_energy / 1e6
+                cb_total = cb1 + cb2
+                penalty = round(cb1 * 100 + cb2 * 380)
+            elif gfi >= direct_now:
+                tier = "Tier 1"
+                cb1 = (gfi - direct_now) * total_energy / 1e6
+                cb_total = cb1
+                penalty = round(cb1 * 100)
+            else:
+                tier = "Surplus"
+                cb_total = (gfi - direct_now) * total_energy / 1e6
+                penalty = 0
+
+            # 텍스트로 결과 요약
+            st.markdown(f"**Tier 분류:** {tier}")
+            st.markdown(f"**평균 GFI:** {gfi:,.2f} gCO₂eq/MJ")
+            st.markdown(f"**총 배출량:** {total_emission:,.2f} tCO₂eq")
+            st.markdown(f"**Compliance Balance (CB):** {cb_total:,.2f} tCO₂eq")
+
+            if tier != "Surplus":
+                st.markdown(f"**예상 벌금:** ${penalty:,.0f}")
 
             years = list(range(2028, 2036))
             base_gfi = [round(93.3 * r, 5) for r in [0.96, 0.94, 0.92, 0.877, 0.832, 0.788, 0.744, 0.7]]
