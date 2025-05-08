@@ -865,7 +865,7 @@ if menu == "GFI 계산기(IMO 중기조치)":
             st.subheader("📘 연도별 Compliance 결과")
             st.dataframe(df_result, use_container_width=True, hide_index=True)
 
-# 연도별 탄소세 시각화 준비
+            # 연도별 탄소세 시각화 준비
             df_penalty = df_result.copy()
             df_penalty["연도"] = df_penalty["연도"].astype(int)
 
@@ -880,10 +880,14 @@ if menu == "GFI 계산기(IMO 중기조치)":
             x = np.arange(len(df_penalty))
 
             plt.bar(x - bar_width/2, df_penalty["Tier 1 탄소세 ($)"], width=bar_width, label="Tier 1 탄소세", color="skyblue")
-            if "Tier 2 Penalty ($)" in df_penalty.columns:
+            if "Tier 2 탄소세 ($)" in df_penalty.columns:
                 plt.bar(x + bar_width/2, df_penalty["Tier 2 탄소세 ($)"], width=bar_width, label="Tier 2 탄소세", color="orange")
 
             plt.plot(x, df_penalty["총 탄소세 ($)"], label="총 탄소세", color="red", marker="o", linewidth=2)
+            
+            #텍스트 표기 (선택)
+            for i, row in df_penalty.iterrows():
+                plt.text(x[i], row["총 탄소세 ($)"] + 20000, f"${int(row['총 탄소세 ($)']):,}", ha='center', va='bottom', fontsize=8, color="red")
 
             plt.xticks(x, df_penalty["연도"])
             plt.xlabel("연도")
