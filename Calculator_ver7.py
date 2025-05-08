@@ -854,7 +854,7 @@ if menu == "GFI 계산기(IMO 중기조치)":
                 data.append(row)
 
             # ✅ 열 순서 지정
-            columns_order = ["No.", "연도", "Tier",
+            columns_order = ["연도", "Tier",
                  "Tier 1 CB (tCO₂eq)", "Tier 1 탄소세 ($)",
                  "Tier 2 CB (tCO₂eq)", "Tier 2 탄소세 ($)",
                  "Surplus (tCO₂eq)", "총 탄소세 ($)"]
@@ -887,7 +887,7 @@ if menu == "GFI 계산기(IMO 중기조치)":
             
             #텍스트 표기
             for i, row in df_penalty.iterrows():
-                offset = max(df_penalty["총 탄소세 ($)"]) * 0.03  # 3% 여유
+                offset = max(df_penalty["총 탄소세 ($)"]) * 0.04  # 4% 여유
                 plt.text(x[i], row["총 탄소세 ($)"] + offset, f"${int(row['총 탄소세 ($)']):,}", ha='center', va='bottom', fontsize=8, color="red")
          
             # y축 최대값 조정
