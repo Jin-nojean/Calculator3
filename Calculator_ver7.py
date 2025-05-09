@@ -758,18 +758,18 @@ if menu == "GFI 계산기(IMO 중기조치)":
             # Tier 구분 및 CB, Penalty 계산
             if gfi >= base_now:
                 tier = "Tier 2"
-                cb2 = (gfi - base_now) * total_energy / 1e6
-                cb1 = (base_now - direct_now) * total_energy / 1e6
+                cb2 = round(round(gfi - base_now, 4) * round(total_energy, 4) / 1e6, 4)
+                cb1 = round(round(base_now - direct_now, 4) * round(total_energy, 4) / 1e6, 4)
                 cb_total = cb1 + cb2
-                penalty = round(cb1 * 100 + cb2 * 380)
+                penalty = round(cb1 * 100 + cb2 * 380, 0)
             elif gfi >= direct_now:
                 tier = "Tier 1"
-                cb1 = (gfi - direct_now) * total_energy / 1e6
+                cb1 = round(round(gfi - direct_now, 4) * round(total_energy, 4) / 1e6, 4)
                 cb_total = cb1
-                penalty = round(cb1 * 100)
+                penalty = round(cb1 * 100, 4)
             else:
                 tier = "Surplus"
-                cb_total = (gfi - direct_now) * total_energy / 1e6
+                cb_total = round(round(gfi - direct_now, 4) * round(total_energy, 4)/ 1e6, 4)
                 penalty = 0
 
             # 텍스트로 결과 요약
@@ -790,8 +790,8 @@ if menu == "GFI 계산기(IMO 중기조치)":
 
             # 그래프 시각화
             plt.figure(figsize=(8, 4))
-            plt.plot(years, base_gfi, label="Base GFI", linestyle="--", marker="o")
-            plt.plot(years, direct_gfi, label="Direct GFI", linestyle=":", marker="o")
+            plt.plot(years, base_gfi, label="Base GFI(TIER2)", linestyle="--", marker="o")
+            plt.plot(years, direct_gfi, label="Direct GFI(TIER1)", linestyle=":", marker="o")
             plt.hlines(gfi, 2028, 2035, color="red", linestyles="-", label=f"Your GFI: {gfi:.2f}")
             
             # ✅ ZNZ 선 추가
