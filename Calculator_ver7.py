@@ -761,12 +761,12 @@ if menu == "GFI 계산기(IMO 중기조치)":
                 cb2 = round(round(gfi - base_now, 4) * round(total_energy, 4) / 1e6, 4)
                 cb1 = round(round(base_now - direct_now, 4) * round(total_energy, 4) / 1e6, 4)
                 cb_total = cb1 + cb2
-                penalty = round(cb1 * 100 + cb2 * 380, 0)
+                penalty = round(cb1 * 100,0) + round(cb2 * 380, 0)
             elif gfi >= direct_now:
                 tier = "Tier 1"
                 cb1 = round(round(gfi - direct_now, 4) * round(total_energy, 4) / 1e6, 4)
                 cb_total = cb1
-                penalty = round(cb1 * 100, 4)
+                penalty = round(cb1 * 100, 0)
             else:
                 tier = "Surplus"
                 cb_total = round(round(gfi - direct_now, 4) * round(total_energy, 4)/ 1e6, 4)
@@ -782,7 +782,7 @@ if menu == "GFI 계산기(IMO 중기조치)":
                 st.markdown(f"**예상 벌금:** ${penalty:,.0f}")
 
             years = list(range(2028, 2036))
-            base_gfi = [round(93.3 * r, 5) for r in [0.96, 0.94, 0.92, 0.877, 0.832, 0.788, 0.744, 0.7]]
+            base_gfi = [round(93.3 * r, 5) for r in [0.96, 0.94, 0.92, 0.876, 0.832, 0.788, 0.744, 0.7]]
             direct_gfi = [93.3*(1-0.17),93.3*(1-0.19),93.3*(1-0.21),93.3*(1-0.254),93.3*(1-0.298),93.3*(1-0.342),93.3*(1-0.386),93.3*(1-0.43)]
 
             # ZNZ 기준선 추가 (연도별 19.0 or 14.0)
