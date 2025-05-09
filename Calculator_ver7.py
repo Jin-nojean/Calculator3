@@ -835,7 +835,7 @@ if menu == "GFI 계산기(IMO 중기조치)":
                 elif gfi > dg:
                     row["Tier"] = "Tier 1"
                     cb1 = round(round(gfi - dg, 4) * round(total_energy, 4) / 1e6, 4)
-                    p1 = round(cb1 * 100, 4)
+                    p1 = round(cb1 * 100, 0)
                     total_penalty = p1
                     row["Tier 1 CB (tCO₂eq)"] = f"{cb1:,.0f} tCO₂eq"
                     row["Tier 1 탄소세 ($)"] = f"${p1:,.0f}"
