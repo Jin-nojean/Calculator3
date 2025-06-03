@@ -1041,6 +1041,7 @@ if menu == "GFI 계산기(IMO 중기조치)":
             st.session_state["fuel_data"] = []
             st.session_state["edit_index"] = None
             st.session_state["gfi_calculated"] = False
+            st.session_state.pop("expanded_fuel_data_gfi", None)  # 혼합연료 분해 결과 제거
             st.rerun()
 
     # 계산 결과 표시
@@ -1508,9 +1509,14 @@ elif menu == "FuelEU Maritime":
             st.session_state["fueleu_data"] = []
             st.session_state["fueleu_edit_index"] = None
             st.session_state["fueleu_calculated"] = False
+            st.session_state.pop("expanded_fuel_data_FEUM", None)  # 안전하게 키 제거
             st.rerun()
 
-    if st.session_state["fueleu_calculated"] and st.session_state["fueleu_data"]:
+    if (
+    st.session_state.get("fueleu_calculated", False)
+    and st.session_state.get("fueleu_data")
+    and "expanded_fuel_data_FEUM" in st.session_state
+):
         st.success("FuelEU 계산 완료")
 
         merged_fuel_data = get_merged_fueleu_data(st.session_state["expanded_fueleu_data_FEUM"])
