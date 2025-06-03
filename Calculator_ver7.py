@@ -263,6 +263,54 @@ def get_merged_gfi_data(fuel_data_list):
         })
     return merged_list
 
+#FEUM 혼합 연료 합치기
+def expand_mixed_fuel_FEUM(fuel_data: list[dict]) -> list[dict]:
+    expanded_data = []
+
+    for row in fuel_data:
+        fuel_type = row["연료종류"]
+        if fuel_type.startswith("B24(") or fuel_type.startswith("B30("):
+            # 혼합비율 설정
+            if fuel_type.startswith("B24"):
+                fossil_ratio = 0.76
+            else:  # B30
+                fossil_ratio = 0.70
+            bio_ratio = 1 - fossil_ratio
+
+            # 괄호 안에 있는 연료 추출 (예: VLSFO, HSFO)
+            inner_fuel = fuel_type.split("(")[1].replace(")", "")
+
+            # 발열량, GFI 그대로 사용
+            lhv_fossil = fuel_defaults_FEUM[inner_fuel]["LHV"]
+            gfi_fossil = fuel_defaults_FEUM[inner_fuel]["WtW"]
+            lhv_bio = fuel_defaults_FEUM["Bio(Fame)"]["LHV"]
+            gfi_bio = fuel_defaults_FEUM["Bio(Fame)"]["WtW"]
+
+            # 역내/역외 분해
+            inside_total = row["역내"]
+            outside_total = row["역외"]
+
+            expanded_data.extend([
+                {
+                    "연료종류": inner_fuel,
+                    "LHV": lhv_fossil,
+                    "GFI": gfi_fossil,
+                    "역내": round(inside_total * fossil_ratio, 4),
+                    "역외": round(outside_total * fossil_ratio, 4),
+                },
+                {
+                    "연료종류": "Bio(Fame)",
+                    "LHV": lhv_bio,
+                    "GFI": gfi_bio,
+                    "역내": round(inside_total * bio_ratio, 4),
+                    "역외": round(outside_total * bio_ratio, 4),
+                }
+            ])
+        else:
+            expanded_data.append(row)
+
+    return expanded_data
+
 #FEUM 연료 합치기
 def get_merged_fueleu_data(fuel_data_list):
     grouped = defaultdict(lambda: {"역내": 0.0, "역외": 0.0, "LHV": 0.0, "GFI": 0.0})
@@ -322,9 +370,8 @@ def get_vlsfo_penalty_per_ton(year: int) -> float:
     return round(emission * 2400, 2)
 
 #FuelEU Martime 계산 함수
-def calculate_fueleu_result(fuel_data: list[dict]) -> pd.DataFrame:
+def calculate_fueleu_result(fuel_data: list[dict], fuel_defaults_FEUM: dict):
     expanded_rows = []
-
     for row in fuel_data:
         fuel_type = row["연료종류"]
 
@@ -896,7 +943,6 @@ if menu == "GFI 계산기(IMO 중기조치)":
                 st.session_state["edit_index"] = None
                 st.rerun()
 
-
     # 연료 추가
     else:
         col1, col2 = st.columns([5, 2])
@@ -1451,6 +1497,8 @@ elif menu == "FuelEU Maritime":
     with col2:        
         if st.button("FuelEU 계산하기"):
             if st.session_state["fueleu_data"]:
+                expanded_fuel_data = expand_mixed_fuel_FEUM(st.session_state["fueleu_data"])
+                st.session_state["expanded_fuel_data"] = expanded_fuel_data
                 st.session_state["fueleu_calculated"] = True
             else:
                 st.warning("연료를 먼저 입력해주세요.")
@@ -1466,7 +1514,9 @@ elif menu == "FuelEU Maritime":
         st.success("FuelEU 계산 완료")
 
         merged_fuel_data = get_merged_fueleu_data(st.session_state["fueleu_data"])
-        result = calculate_fueleu_result(merged_fuel_data)
+        #result = calculate_fueleu_result(merged_fuel_data, fuel_defaults_FEUM)
+        # 수정
+        result = calculate_fueleu_result(st.session_state["expanded_fuel_data"], fuel_defaults_FEUM)
 
     # ✅ VLSFO 풀링 가능량 미리 계산 (Δ1 + Δ2)
         vlsfo_info = fuel_defaults_FEUM["VLSFO"]
@@ -1476,7 +1526,7 @@ elif menu == "FuelEU Maritime":
     "연료종류": "VLSFO", "LHV": vlsfo_props["LHV"], "GFI": vlsfo_props["GFI"],
     "역내": delta1_in, "역외": 0.0
 }]
-        result2 = calculate_fueleu_result(temp_data)
+        result2 = calculate_fueleu_result(temp_data, fuel_defaults_FEUM)
         delta2_in = calculate_pooling_ton_by_fuel(result2, "VLSFO", props=vlsfo_props)
         vlsfo_total_in = round(delta1_in + delta2_in, 4)
 
@@ -1528,7 +1578,7 @@ elif menu == "FuelEU Maritime":
                 "연료종류": fuel, "LHV": props["LHV"], "GFI": props["GFI"],
                 "역내": delta1_in, "역외": 0.0
             }]
-                result2 = calculate_fueleu_result(temp_data)
+                result2 = calculate_fueleu_result(temp_data,fuel,fuel_defaults_FEUM)
                 delta2_in = calculate_pooling_ton_by_fuel(result2, fuel_type=fuel, props=props)
 
                 total_in = round(delta1_in + delta2_in, 4)
