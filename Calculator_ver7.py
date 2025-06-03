@@ -487,82 +487,20 @@ def calculate_pooling_ton_by_fuel(result: dict, fuel_type: str, props: dict) -> 
 # LNG, LPG, B100, B24, B30 역내 사용량 계산
 def calculate_required_green_fuel_inside(result, fuel_type, fuel_defaults_FEUM):
     std = result["standard_now"]
-    pb_energy = result["total_energy"]
-    emission = result["total_emission"] * 1_000_000  # tCO₂eq → gCO₂eq
+    total_energy = result["total_energy"]
+    total_emission = result["total_emission"] * 1_000_000  # tCO₂eq → gCO₂eq
 
-    vlsfo_lhv = fuel_defaults_FEUM["VLSFO"]["LHV"]
-    vlsfo_gfi = fuel_defaults_FEUM["VLSFO"]["WtW"]
-    hsfo_lhv = fuel_defaults_FEUM["HSFO"]["LHV"]
-    hsfo_gfi = fuel_defaults_FEUM["HSFO"]["WtW"]
-    b100_lhv = fuel_defaults_FEUM["Bio(Fame)"]["LHV"]
-    b100_gfi = fuel_defaults_FEUM["Bio(Fame)"]["WtW"]
+    lhv = fuel_defaults_FEUM[fuel_type]["LHV"]
+    gfi = fuel_defaults_FEUM[fuel_type]["WtW"]
 
-    if fuel_type == "B24(HSFO)":
-        bio_ratio = 0.24
-        fossil_ratio = 0.76
-        numerator = emission - std * pb_energy
-        part1 = bio_ratio * b100_lhv * (std - b100_gfi)
-        part2 = (fossil_ratio * hsfo_lhv - bio_ratio * b100_lhv) * (hsfo_gfi - std)
-        denominator = part1 - part2
-    
-        if denominator <= 0:
-            return 0.0
-        if numerator / denominator <= 0:
-            return 0.0
-        
-    elif fuel_type == "B30(HSFO)":
-        bio_ratio = 0.3
-        fossil_ratio = 0.7
-        numerator = emission - std * pb_energy
-        part1 = bio_ratio * b100_lhv * (std - b100_gfi)
-        part2 = (fossil_ratio * hsfo_lhv - bio_ratio * b100_lhv) * (hsfo_gfi - std)
-        denominator = part1 - part2
-    
-        if denominator <= 0:
-            return 0.0
-        if numerator / denominator <= 0:
-            return 0.0
-        
-    elif fuel_type == "B24(VLSFO)":
-        bio_ratio = 0.24
-        fossil_ratio = 0.76
-        numerator = emission - std * pb_energy
-        part1 = bio_ratio * b100_lhv * (std - b100_gfi)
-        part2 = (fossil_ratio * vlsfo_lhv - bio_ratio * b100_lhv) * (vlsfo_gfi - std)
-        denominator = part1 - part2
-    
-        if denominator <= 0:
-            return 0.0
-        if numerator / denominator <= 0:
-            return 0.0
-    
-    elif fuel_type == "B30(VLSFO)":
-        bio_ratio = 0.3
-        fossil_ratio = 0.7
-        numerator = emission - std * pb_energy
-        part1 = bio_ratio * b100_lhv * (std - b100_gfi)
-        part2 = (fossil_ratio * vlsfo_lhv - bio_ratio * b100_lhv) * (vlsfo_gfi - std)
-        denominator = part1 - part2
-    
-        if denominator <= 0:
-            return 0.0
-        if numerator / denominator <= 0:
-            return 0.0
-    else:
-        std = result["standard_now"]
-        total_energy = result["total_energy"]
-        total_emission = result["total_emission"] * 1_000_000  # tCO₂eq → gCO₂eq
+    numerator = total_emission - std * total_energy
+    denominator = lhv * (std - gfi)
 
-        lhv = fuel_defaults_FEUM[fuel_type]["LHV"]
-        gfi = fuel_defaults_FEUM[fuel_type]["WtW"]
+    if numerator <= 0 or denominator <= 0:
+        return 0.0
 
-        numerator = total_emission - std * total_energy
-        denominator = lhv * (std - gfi)
-
-        if numerator <= 0 or denominator <= 0:
-            return 0.0
-        
-    return round(numerator / denominator, 4)
+    required_mj = numerator / denominator
+    return round(required_mj, 4)
 
 # B24, B30 역외 사용량 계산
 def calculate_b24_b30_outside_ton(result, fuel_type, fuel_defaults_FEUM):
@@ -1379,8 +1317,8 @@ if menu == "GFI 계산기(IMO 중기조치)":
                             t2 = cb2 * 1_000_000 / delta_gfi_t2 / info["LHV"] if delta_gfi_t2 > 0 else 0
                             t1 = cb1 * 1_000_000 / delta_gfi_t1 / info["LHV"] if delta_gfi_t1 > 0 else 0
 
-                            data_tier2[fuel].append(round(t2, 2))
-                            data_tier1[fuel].append(round(t1, 2))
+                            data_tier2[fuel].append(round(t2, 3))
+                            data_tier1[fuel].append(round(t1, 3))
 
                     # Tier 1 계산만 발생한 경우도 포함
                     elif gfi > dg:
@@ -1390,7 +1328,7 @@ if menu == "GFI 계산기(IMO 중기조치)":
                         for fuel, info in green_fuels.items():
                             delta_gfi_t1 = dg - info["GFI"]
                             t1 = cb1 * 1_000_000 / delta_gfi_t1 / info["LHV"] if delta_gfi_t1 > 0 else 0
-                            data_tier1[fuel].append(round(t1, 2))
+                            data_tier1[fuel].append(round(t1, 3))
 
 
                 df_t2 = pd.DataFrame(data_tier2)
@@ -1402,7 +1340,7 @@ if menu == "GFI 계산기(IMO 중기조치)":
                 for df in [df_t2_formatted, df_t1_formatted]:
                     for col in df.columns:
                         if col != "연도":
-                            df[col] = df[col].apply(lambda x: f"{x:,.2f}")
+                            df[col] = df[col].apply(lambda x: f"{x:,.3f}")
 
                 st.write("✅ Tier 2 탄소세 상쇄에 필요한 각 유종별 연료량 (톤)")
                 st.dataframe(df_t2_formatted, use_container_width=True, hide_index=True)
@@ -1585,12 +1523,13 @@ elif menu == "FuelEU Maritime":
         st.write(f"**평균 GHG Intensity:** {result['avg_ghg_intensity']:,.4f} gCO₂eq/MJ")
         st.write(f"**기준 GHG Intensity (2025):** {result['standard_now']:,.4f} gCO₂eq/MJ")
         st.write(f"**Compliance Balance (CB):** {result['cb']:,.2f} tCO₂eq")
-        st.markdown("### 🔍 B24/B30 연료 기본값")
-        for fuel in ["B24(HSFO)", "B30(HSFO)", "B24(VLSFO)", "B30(VLSFO)"]:
-            if fuel in fuel_defaults_FEUM:
-                lhv = fuel_defaults_FEUM[fuel]["LHV"]
-                wtw = fuel_defaults_FEUM[fuel]["WtW"]
-                st.write(f"{fuel}: LHV = {lhv} MJ/Ton, GHG Intensity = {wtw} gCO₂eq/MJ")
+        #st.markdown("### 🔍 B24/B30 연료 기본값")
+        #for fuel in ["B24(HSFO)", "B30(HSFO)", "B24(VLSFO)", "B30(VLSFO)"]:
+         #   if fuel in fuel_defaults_FEUM:
+          #      lhv = fuel_defaults_FEUM[fuel]["LHV"]
+           #     wtw = fuel_defaults_FEUM[fuel]["WtW"]
+            #    st.write(f"{fuel}: LHV = {lhv} MJ/Ton, GHG Intensity = {wtw} gCO₂eq/MJ")
+                
         #st.write(f"**예상 벌금:** € {result['penalty_eur']:,.3f}")
         # Surplus vs Deficit 분기
         if result["avg_ghg_intensity"] > result["standard_now"]:
@@ -1685,7 +1624,7 @@ elif menu == "FuelEU Maritime":
                 # ✅ 쉼표 포맷 처리
                 df_green = pd.DataFrame(green_table)
                 for col in ["역내 톤수", "역외 톤수"]:
-                    df_green[col] = df_green[col].apply(lambda x: f"{x:,.2f}")
+                    df_green[col] = df_green[col].apply(lambda x: f"{x:,.3f}")
                 st.dataframe(pd.DataFrame(df_green))
                 
                 # 📈 GHG Intensity 기준선 vs 평균 GHG Intensity 그래프 및 연도별 CB/벌금 테이블
