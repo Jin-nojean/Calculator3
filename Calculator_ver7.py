@@ -1512,12 +1512,9 @@ elif menu == "FuelEU Maritime":
             st.session_state.pop("expanded_fuel_data_FEUM", None)  # 안전하게 키 제거
             st.rerun()
 
-    if (
-    st.session_state.get("fueleu_calculated", False)
-    and st.session_state.get("fueleu_data")
-    and "expanded_fuel_data_FEUM" in st.session_state
-):
-        st.success("FuelEU 계산 완료")
+    if "expanded_fuel_data_FEUM" not in st.session_state:
+        st.error("❗️연료 데이터가 누락되었습니다. 다시 계산을 실행해주세요.")
+        st.stop()
 
         merged_fuel_data = get_merged_fueleu_data(st.session_state["expanded_fueleu_data_FEUM"])
         #result = calculate_fueleu_result(merged_fuel_data, fuel_defaults_FEUM)
