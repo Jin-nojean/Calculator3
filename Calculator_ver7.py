@@ -1031,7 +1031,7 @@ if menu == "GFI 계산기(IMO 중기조치)":
                 # 분해된 연료 데이터 생성
                 expanded_fuel_data = expand_mixed_fuel_GFI(st.session_state["fuel_data"])
                 # 분해된 연료 데이터를 세션 상태에 저장 (필요시)
-                st.session_state["expanded_fuel_data"] = expanded_fuel_data
+                st.session_state["expanded_fuel_data_gfi"] = expanded_fuel_data
                 st.session_state["gfi_calculated"] = True
             else:
                 st.warning("연료를 먼저 입력해주세요.")
@@ -1050,7 +1050,7 @@ if menu == "GFI 계산기(IMO 중기조치)":
         # ✨ 여기에 기존 GFI 계산기 로직 (그래프, 표 등) 붙이면 됨
         #merged_gfi_data = get_merged_gfi_data(st.session_state["fuel_data"])
         # expanded_fuel_data를 사용해 계산 및 표 생성
-        merged_gfi_data = get_merged_gfi_data(expanded_fuel_data)  # 이 함수에 맞게 수정 필요
+        merged_gfi_data = get_merged_gfi_data("expanded_fuel_data_gfi")  # 이 함수에 맞게 수정 필요
         df = pd.DataFrame(merged_gfi_data)
         if not df.empty:
             df["총배출량(tCO2eq)"] = df["LHV"] * df["WtW"] * df["사용량"] * 1e-6
@@ -1498,7 +1498,7 @@ elif menu == "FuelEU Maritime":
         if st.button("FuelEU 계산하기"):
             if st.session_state["fueleu_data"]:
                 expanded_fuel_data = expand_mixed_fuel_FEUM(st.session_state["fueleu_data"])
-                st.session_state["expanded_fuel_data"] = expanded_fuel_data
+                st.session_state["expanded_fuel_data_FEUM"] = expanded_fuel_data
                 st.session_state["fueleu_calculated"] = True
             else:
                 st.warning("연료를 먼저 입력해주세요.")
@@ -1513,7 +1513,7 @@ elif menu == "FuelEU Maritime":
     if st.session_state["fueleu_calculated"] and st.session_state["fueleu_data"]:
         st.success("FuelEU 계산 완료")
 
-        merged_fuel_data = get_merged_fueleu_data(st.session_state["fueleu_data"])
+        merged_fuel_data = get_merged_fueleu_data(st.session_state["expanded_fueleu_data_FEUM"])
         #result = calculate_fueleu_result(merged_fuel_data, fuel_defaults_FEUM)
         # 수정
         result = calculate_fueleu_result(st.session_state["expanded_fuel_data"], fuel_defaults_FEUM)
