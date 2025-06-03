@@ -1625,7 +1625,7 @@ elif menu == "FuelEU Maritime":
                 df_green = pd.DataFrame(green_table)
                 for col in ["역내 톤수", "역외 톤수"]:
                     df_green[col] = df_green[col].apply(lambda x: f"{x:,.3f}")
-                st.dataframe(pd.DataFrame(df_green))
+                st.dataframe(pd.DataFrame(df_green), use_container_width=True, hide_index=True)
                 
                 # 📈 GHG Intensity 기준선 vs 평균 GHG Intensity 그래프 및 연도별 CB/벌금 테이블
         if "avg_ghg_intensity" in result and "total_energy" in result:
