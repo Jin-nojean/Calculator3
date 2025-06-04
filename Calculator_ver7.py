@@ -1250,6 +1250,7 @@ if menu == "GFI 계산기(IMO 중기조치)":
                     }
 
                 base_gfi_dict = dict(zip(years, base_gfi))
+                direct_gfi_dict = dict(zip(years, direct_gfi))
 
                 offset_table = {"연도": []}
                 for fuel in fuel_gfi_lhv.keys():
