@@ -1279,6 +1279,7 @@ if menu == "GFI 계산기(IMO 중기조치)":
                         df_offset_formatted[col] = df_offset_formatted[col].apply(lambda x: f"{float(x):,.2f}")
                 st.dataframe(df_offset_formatted, use_container_width=True, hide_index=True)
             direct_gfi_2028 = 93.3 * (1 - 0.17)
+            base_gfi_2028 = 93.3 * (1 - 0.04)
             # ✅ Tier 2 상쇄용 친환경 연료 사용량 계산 (연도별)
             if gfi > direct_gfi_2028:  # GFI가 2028년 direct 보다 클 때만 계산
 
@@ -1289,7 +1290,7 @@ if menu == "GFI 계산기(IMO 중기조치)":
                     "LHV": fuel_defaults_GFI[fuel]["LHV"]
                     }
                     for fuel in fuel_defaults_GFI
-                        if fuel_defaults_GFI[fuel]["WtW"] < direct_gfi_2028
+                        if fuel_defaults_GFI[fuel]["WtW"] < base_gfi_2028
                     }
 
                 data_tier2 = {"연도": []}
