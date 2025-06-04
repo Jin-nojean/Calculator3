@@ -1260,11 +1260,12 @@ if menu == "GFI 계산기(IMO 중기조치)":
                     surplus_str = entry["Surplus (tCO₂eq)"]
                     surplus = float(surplus_str.replace(",", "").split()[0])
                     base = base_gfi_dict[year]
+                    direct = direct_gfi_dict[year]
 
                     offset_table["연도"].append(year)
 
                     for fuel, info in fuel_gfi_lhv.items():
-                        delta_gfi = info["GFI"] - base
+                        delta_gfi = info["GFI"] - direct
                         if delta_gfi > 0:
                             energy_mj = surplus * 1_000_000 / delta_gfi
                             tonnage = energy_mj / info["LHV"]
